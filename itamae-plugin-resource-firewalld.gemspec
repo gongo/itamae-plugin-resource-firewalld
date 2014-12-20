@@ -22,5 +22,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'test-unit', '~> 3.0.1'
   spec.add_development_dependency 'mocha'
+  spec.add_development_dependency 'coveralls'
   spec.add_dependency 'itamae'
 end
