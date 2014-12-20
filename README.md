@@ -3,7 +3,7 @@
 [Itamae](https://github.com/ryotarai/itamae) resource plugin to manage [firewalld](https://fedorahosted.org/firewalld/).
 
 [![Build Status](https://travis-ci.org/gongo/itamae-plugin-resource-firewalld.svg?branch=master)](https://travis-ci.org/gongo/itamae-plugin-resource-firewalld)
-[![Coverage Status](https://coveralls.io/repos/gongo/itamae-plugin-resource-firewalld/badge.png)](https://coveralls.io/r/gongo/itamae-plugin-resource-firewalld)
+[![Coverage Status](https://coveralls.io/repos/gongo/itamae-plugin-resource-firewalld/badge.png?branch=master)](https://coveralls.io/r/gongo/itamae-plugin-resource-firewalld?branch=master)
 [![Code Climate](https://codeclimate.com/github/gongo/itamae-plugin-resource-firewalld/badges/gpa.svg)](https://codeclimate.com/github/gongo/itamae-plugin-resource-firewalld)
 
 ## Usage
@@ -58,6 +58,10 @@ public (default, active)
   icmp-blocks:
   rich rules:
 ```
+
+### See also
+
+Demonstration environment [examples](./examples)
 
 
 ## Installation
