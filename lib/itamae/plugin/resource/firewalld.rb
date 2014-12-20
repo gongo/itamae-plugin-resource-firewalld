@@ -1,4 +1,5 @@
 require 'itamae/plugin/resource/firewalld/version'
+require 'itamae/plugin/resource/firewalld_service'
 require 'itamae/plugin/resource/firewalld_zone'
 
 module Itamae
