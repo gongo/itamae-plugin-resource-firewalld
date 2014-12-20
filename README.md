@@ -101,6 +101,10 @@ firewalld_zone 'zone_name' do
 end
 ```
 
+**IMPORTANT**
+
+`firewalld_zone` resource performs the processing `firewall-cmd` with [--permanent](http://fedoraproject.org/wiki/FirewallD#Permanent_zone_handling) .
+
 ## TODO
 
 Unimplemented:
