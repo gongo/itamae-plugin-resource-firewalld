@@ -82,6 +82,8 @@ Or install it yourself as:
 
 ## Features
 
+### firewalld_zone
+
 Provides a `firewalld_zone` resource that operation of `Zone`:
 
 ```ruby
@@ -101,15 +103,35 @@ firewalld_zone 'zone_name' do
 end
 ```
 
-**IMPORTANT**
+### firewalld_service
 
-`firewalld_zone` resource performs the processing `firewall-cmd` with [--permanent](http://fedoraproject.org/wiki/FirewallD#Permanent_zone_handling) .
+Provides a `firewalld_service` resource that can create or delete of `Service`:
+
+```ruby
+firewalld_service 'my-service' do
+  action      # [:create or :delete]
+
+  short       # [String]
+  description # [String]
+  port        # [String]
+  protocol    # [String]
+  module_name # [String]
+  to_ipv4     # [String]
+  to_ipv6     # [String]
+end
+```
+
+After `itamae` execute, `/etc/firewalld/service/my-service.xml` is created.
+
+## IMPORTANT
+
+`itamae-plugin-resource-firewalld`'s resource performs the processing `firewall-cmd` with [--permanent](http://fedoraproject.org/wiki/FirewallD#Permanent_zone_handling) .
 
 ## TODO
 
 Unimplemented:
 
-- Add a new `zone`, `icmptype` and `service`
+- Add a new `zone` and `icmptype` resource
 - Operation of `Direct`, `Lockdown`
 - Etc...
 
