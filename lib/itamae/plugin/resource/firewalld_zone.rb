@@ -33,7 +33,6 @@ module Itamae
 
         def set_current_attributes
           ARRAYABLE_SETTINGS.each do |name|
-            attributes[name].sort! if attributes[name]
             current[name] = current_setting(name) if attributes[name]
           end
 
