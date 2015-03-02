@@ -37,7 +37,7 @@ module Itamae
           end
 
           current.masquerade    = masquerade_enabled? unless attributes.masquerade.nil?
-          current.default_zone  = default_zone?       unless attributes.default_zone.nil?
+          current.default_zone  = default_zone? if attributes.default_zone
         end
 
         def action_update(options)
@@ -45,14 +45,13 @@ module Itamae
             update_setting(name, current[name], attributes[name]) if attributes[name]
           end
 
-          if !attributes.masquerade.nil? && (current.masquerade != attributes.masquerade)
+          if current.masquerade != attributes.masquerade
             update_masquerade(attributes.masquerade)
-            updated!
           end
 
+          # Only perform when `default_zone true` is specified (and current is false)
           if attributes.default_zone && !current.default_zone
             set_default_zone
-            updated!
           end
         end
 
