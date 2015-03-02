@@ -9,6 +9,11 @@ module Itamae
           @resource = FirewalldZone.new(stub, 'public')
         end
 
+        test 'Noop' do
+          @resource.expects(:notify).never
+          @resource.run
+        end
+
         sub_test_case 'settings' do
           setup do
             #
