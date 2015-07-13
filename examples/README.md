@@ -40,7 +40,8 @@ $ bundle exec itamae ssh -h default --vagrant recipe.rb
  INFO :    service[firewalld-add-service]
  INFO :       action: restart
  INFO :    service[firewalld]
- INFO :       action: restart```
+ INFO :       action: restart
+```
 
 ### Confirmation
 

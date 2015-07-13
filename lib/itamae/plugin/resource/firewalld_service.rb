@@ -68,7 +68,7 @@ module Itamae
           local_path  = build_xmlfile_on_local
           remote_path = ::File.join(runner.tmpdir, Time.now.to_f.to_s)
 
-          send_file(local_path, remote_path)
+          backend.send_file(local_path, remote_path)
           remote_path
         end
 
