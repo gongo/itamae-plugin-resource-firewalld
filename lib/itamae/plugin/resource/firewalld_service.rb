@@ -34,9 +34,9 @@ module Itamae
             current.description = service['description'].text
           end
 
-          current.ports = service.collect('port') {|port|
+          current.ports = service.collect('port') do |port|
             [port.attributes['protocol'], port.attributes['port']]
-          }
+          end
 
           if service['module']
             current.module_name = service['module'].attributes['name']
@@ -70,15 +70,12 @@ module Itamae
 
         def normalize_ports(ports)
           return [] if ports.nil?
-          ports.collect {|port|
-            protocol, portnum = port
-            if portnum
-              portnum = "#{portnum.min}-#{portnum.max}" if portnum.is_a?(Range)
-              [protocol.to_s, portnum.to_s]
-            else
-              [protocol.to_s, '']
-            end
-          }.sort
+          ports.map(&:to_s).sort
+        end
+
+        # '80/tcp' => ['tcp', 80]; 'igmp' => ['igmp']
+        def parse_port(port)
+          port.to_s.split('/', 2).reverse
         end
 
         def build_xmlfile_on_remote
@@ -124,11 +121,11 @@ module Itamae
           return unless attributes.ports
 
           normalize_ports(attributes.ports).each do |port|
-            protocol, portnum = port
+            protocol, portnum = parse_port(port)
 
             node = @service_document.add_element('port')
-            node.add_attribute('protocol', protocol.to_s)
-            node.add_attribute('port', portnum.to_s)
+            node.add_attribute('protocol', protocol)
+            node.add_attribute('port', portnum || '')
           end
         end
 
