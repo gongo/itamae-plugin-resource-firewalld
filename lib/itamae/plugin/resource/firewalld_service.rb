@@ -11,8 +11,7 @@ module Itamae
 
         define_attribute :short,       type: String, default: ''
         define_attribute :description, type: String, default: ''
-        define_attribute :protocol,    type: String, default: ''
-        define_attribute :port,        type: String, default: ''
+        define_attribute :ports,       type: Array,  default: []
         define_attribute :module_name, type: String, default: ''
         define_attribute :to_ipv4,     type: String, default: ''
         define_attribute :to_ipv6,     type: String, default: ''
@@ -35,9 +34,12 @@ module Itamae
             current.description = service['description'].text
           end
 
-          if service['port']
-            current.protocol = service['port'].attributes['protocol']
-            current.port = service['port'].attributes['port']
+          current.ports = service.collect('port') do |port|
+            if port.attributes['port'].nil? || port.attributes['port'].empty?
+              port.attributes['protocol']
+            else
+              "#{port.attributes['port']}/#{port.attributes['protocol']}"
+            end
           end
 
           if service['module']
@@ -48,6 +50,12 @@ module Itamae
             current.to_ipv4 = service['destination'].attributes['ipv4']
             current.to_ipv6 = service['destination'].attributes['ipv6']
           end
+        end
+
+        def show_differences
+          current.ports = normalize_ports(current.ports)
+          attributes.ports = normalize_ports(attributes.ports)
+          super
         end
 
         def action_create(options)
@@ -64,6 +72,16 @@ module Itamae
 
         private
 
+        def normalize_ports(ports)
+          return [] if ports.nil?
+          ports.map(&:to_s).sort
+        end
+
+        # '80/tcp' => ['tcp', 80]; 'igmp' => ['igmp']
+        def parse_port(port)
+          port.to_s.split('/', 2).reverse
+        end
+
         def build_xmlfile_on_remote
           local_path  = build_xmlfile_on_local
           remote_path = ::File.join(runner.tmpdir, Time.now.to_f.to_s)
@@ -79,7 +97,7 @@ module Itamae
 
           add_short_tag
           add_description_tag
-          add_port_tag
+          add_port_tags
           add_module_tag
           add_destination_tag
 
@@ -103,12 +121,16 @@ module Itamae
           description.text = attributes.description unless attributes.description.empty?
         end
 
-        def add_port_tag
-          return if (attributes.protocol.empty? && attributes.port.empty?)
+        def add_port_tags
+          return unless attributes.ports
 
-          node = @service_document.add_element('port')
-          node.add_attribute('protocol', attributes.protocol) unless attributes.protocol.empty?
-          node.add_attribute('port', attributes.port) unless attributes.port.empty?
+          normalize_ports(attributes.ports).each do |port|
+            protocol, portnum = parse_port(port)
+
+            node = @service_document.add_element('port')
+            node.add_attribute('protocol', protocol)
+            node.add_attribute('port', portnum || '')
+          end
         end
 
         def add_module_tag

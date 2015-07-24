@@ -86,6 +86,8 @@ module Itamae
   <short>test-service</short>
   <description>test-service description</description>
   <port protocol="tcp" port="2222"/>
+  <port protocol="udp" />
+  <port protocol="tcp" port="80-82"/>
   <module name="test-module"/>
   <destination ipv4="224.0.0.251" ipv6="ff02::fb"/>
 </service>
@@ -95,20 +97,30 @@ module Itamae
             test 'update service' do
               @resource.attributes.short       = 'test-service!!'
               @resource.attributes.description = 'test-service update description'
-              @resource.attributes.protocol    = 'udp'
-              @resource.attributes.port        = '2222-2224'
+              @resource.attributes.ports       = ['2222-2224/udp', '80/tcp', 'igmp']
               @resource.attributes.module_name = 'new-test-module'
               @resource.attributes.to_ipv4     = '172.17.0.1'
               @resource.attributes.to_ipv6     = 'ffff::fc'
               @resource.run
+
+              assert_equal 'test-service',                   @resource.current.short
+              assert_equal 'test-service description',       @resource.current.description
+              assert_equal ['2222/tcp', '80-82/tcp', 'udp'], @resource.current.ports
+              assert_equal 'test-module',                    @resource.current.module_name
+              assert_equal '224.0.0.251',                    @resource.current.to_ipv4
+              assert_equal 'ff02::fb',                       @resource.current.to_ipv6
 
               root = REXML::Document.new(File.read(@resource.local_path))
               service = root.elements['/service'].elements
 
               assert_equal @resource.attributes.short,       service['short'].text
               assert_equal @resource.attributes.description, service['description'].text
-              assert_equal @resource.attributes.protocol,    service['port'].attributes['protocol']
-              assert_equal @resource.attributes.port,        service['port'].attributes['port']
+              assert_equal 'udp',                            service[1, 'port'].attributes['protocol']
+              assert_equal '2222-2224',                      service[1, 'port'].attributes['port']
+              assert_equal 'tcp',                            service[2, 'port'].attributes['protocol']
+              assert_equal '80',                             service[2, 'port'].attributes['port']
+              assert_equal 'igmp',                           service[3, 'port'].attributes['protocol']
+              assert_equal '',                               service[3, 'port'].attributes['port']
               assert_equal @resource.attributes.module_name, service['module'].attributes['name']
               assert_equal @resource.attributes.to_ipv4,     service['destination'].attributes['ipv4']
               assert_equal @resource.attributes.to_ipv6,     service['destination'].attributes['ipv6']
