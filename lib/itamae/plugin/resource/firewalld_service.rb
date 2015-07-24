@@ -35,7 +35,11 @@ module Itamae
           end
 
           current.ports = service.collect('port') do |port|
-            [port.attributes['protocol'], port.attributes['port']]
+            if port.attributes['port'].nil? || port.attributes['port'].empty?
+              port.attributes['protocol']
+            else
+              "#{port.attributes['port']}/#{port.attributes['protocol']}"
+            end
           end
 
           if service['module']
