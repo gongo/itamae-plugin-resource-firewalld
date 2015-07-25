@@ -4,20 +4,12 @@ require 'itamae/plugin/resource/firewalld_service'
 module Itamae
   module Plugin
     module Resource
-      # Stub
-      class FirewalldService
-        def send_file(from, to)
-          @local_path = from
-        end
-
-        def local_path
-          @local_path
-        end
-      end
-
       class TestFirewalldService < Test::Unit::TestCase
         setup do
-          @resource = FirewalldService.new(stub, 'test-service')
+          @backend  = BackendMock.new({})
+          runner    = stub(tmpdir: ::Dir.tmpdir, backend: @backend)
+          recipe    = stub(runner: runner)
+          @resource = FirewalldService.new(recipe, 'test-service')
         end
 
         sub_test_case '#action_delete' do
@@ -56,23 +48,8 @@ module Itamae
         sub_test_case '#action_create' do
           setup do
             @resource.attributes.action = :create
-            @resource.stubs(:runner).returns(stub(tmpdir: ::Dir.tmpdir))
-            @resource.stubs(:move_file)
             @resource.stubs(:run_specinfra).with(:move_file, is_a(String), is_a(String))
-
             @resource.expects(:notify)
-          end
-
-          sub_test_case 'undefined service' do
-            setup do
-              @resource.stubs(:current_status).returns(:undefined)
-            end
-
-            test 'create service' do
-              @resource.run
-
-              assert ::File.exists?(@resource.local_path )
-            end
           end
 
           sub_test_case 'predefined service' do
@@ -110,7 +87,7 @@ module Itamae
               assert_equal '224.0.0.251',                    @resource.current.to_ipv4
               assert_equal 'ff02::fb',                       @resource.current.to_ipv6
 
-              root = REXML::Document.new(File.read(@resource.local_path))
+              root = REXML::Document.new(File.read(@backend.sent_file))
               service = root.elements['/service'].elements
 
               assert_equal @resource.attributes.short,       service['short'].text
