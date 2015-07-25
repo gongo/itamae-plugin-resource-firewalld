@@ -7,8 +7,7 @@ end
 firewalld_service 'my-ssh' do
   short       'my-ssh'
   description 'My perfect ssh!!'
-  port        '2222'
-  protocol    'tcp'
+  ports       %w(2222/tcp)
 
   #
   # Necessary to restart before use added service.

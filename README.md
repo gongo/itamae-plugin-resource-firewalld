@@ -113,7 +113,7 @@ firewalld_service 'my-service' do
 
   short       # [String]
   description # [String]
-  port        # [String]
+  ports       # [Array of String]
   protocol    # [String]
   module_name # [String]
   to_ipv4     # [String]
