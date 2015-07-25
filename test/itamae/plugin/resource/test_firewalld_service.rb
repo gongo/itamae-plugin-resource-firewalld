@@ -20,7 +20,7 @@ module Itamae
           sub_test_case 'predefined service' do
             setup do
               @resource.expects(:run_command)
-                .with(['firewall-cmd', '--permanent', '--list-services'])
+                .with(['firewall-cmd', '--permanent', '--get-services'])
                 .returns(stub(stdout: 'service1 service2 test-service'))
             end
 
@@ -34,7 +34,7 @@ module Itamae
           sub_test_case 'undefined service' do
             setup do
               @resource.expects(:run_command)
-                .with(['firewall-cmd', '--permanent', '--list-services'])
+                .with(['firewall-cmd', '--permanent', '--get-services'])
                 .returns(stub(stdout: 'service1 service2'))
             end
 
