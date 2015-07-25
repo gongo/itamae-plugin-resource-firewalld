@@ -153,7 +153,7 @@ module Itamae
         end
 
         def current_status
-          command  = ['firewall-cmd', '--permanent', '--list-services']
+          command  = ['firewall-cmd', '--permanent', '--get-services']
           services = run_command(command).stdout.strip.split
           services.include?(attributes.name) ? :defined : :undefined
         end
