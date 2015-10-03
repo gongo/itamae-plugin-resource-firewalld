@@ -5,7 +5,7 @@ require 'test/unit'
 require 'mocha/test_unit'
 require 'itamae'
 
-Itamae::Logger.log_device = StringIO.new
+Itamae.logger = ::Logger.new(StringIO.new)
 
 class BackendMock < ::Itamae::Backend::Local
   class UnexpectedCallError < StandardError ; end
